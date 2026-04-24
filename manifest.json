@@ -1,0 +1,16 @@
+{
+  "name": "Daily English",
+  "short_name": "English",
+  "description": "Daily English learning app for Nara & Alex",
+  "start_url": "/english-app/",
+  "display": "standalone",
+  "background_color": "#f5f5f0",
+  "theme_color": "#1a1a1a",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
