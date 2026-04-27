@@ -275,10 +275,9 @@ let quizQuestions=[],quizIndex=0,quizScore=0,quizTotal=5,quizAnswered=false;
 
 function initQuiz(){
   const area=document.getElementById('quiz-area');
-  let h='<div class="quiz-setup"><div class="sec-eyebrow">Quiz</div><div class="quiz-setup-title">Test yourself.</div><div class="quiz-setup-sub">Fill in the blanks — English or Chinese both OK.</div><div class="sec-eyebrow" style="margin-top:1.5rem">How many questions?</div><div class="quiz-count-row">';
-  for(let i=1;i<=10;i++)h+='<button class="quiz-count-btn'+(i===quizTotal?' active':'')+'\" onclick="setQuizCount('+i+',this)">'+i+'</button>';
-  h+='</div><button class="quiz-start-btn" onclick="startQuiz()">Start Quiz →</button></div>';
-  area.innerHTML=h;
+  let btns='';
+  for(let i=1;i<=10;i++){const cls='quiz-count-btn'+(i===quizTotal?' active':'');btns+='<button class="'+cls+'" onclick="setQuizCount('+i+',this)">'+i+'</button>';}
+  area.innerHTML='<div class="quiz-setup"><div class="sec-eyebrow">Quiz</div><div class="quiz-setup-title">Test yourself.</div><div class="quiz-setup-sub">Fill in the blanks — English or Chinese both OK.</div><div class="sec-eyebrow" style="margin-top:1.5rem">How many questions?</div><div class="quiz-count-row">'+btns+'</div><button class="quiz-start-btn" onclick="startQuiz()">Start Quiz →</button></div>';
 }
 
 function setQuizCount(n,btn){
