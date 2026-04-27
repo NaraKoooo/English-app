@@ -82,6 +82,10 @@ button{font-family:Inter,sans-serif;cursor:pointer}
 .hl-panel.open{display:block}.hl-close{position:absolute;top:1rem;right:1.5rem;background:none;border:none;font-size:22px;color:var(--grey)}
 .hl-panel-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--grey);margin-bottom:.75rem}.hl-selected{font-family:Inter,sans-serif;font-weight:700;font-size:24px;background:#fff176;padding:2px 6px;margin-bottom:1rem;display:inline-block}.hl-input{min-height:60px;font-size:17px;resize:none;margin-bottom:1rem}.hl-actions{display:flex;gap:10px}.hl-save{flex:1;padding:14px;background:var(--black);color:var(--white);border:none;font-size:13px;font-weight:700;text-transform:uppercase}.hl-cancel{padding:14px 20px;background:none;border:1.5px solid var(--border);color:var(--grey)}
 .empty{text-align:center;padding:4rem 1rem;color:var(--grey);font-size:16px}.loading{text-align:center;padding:3rem;color:var(--grey);font-style:italic}
+.quiz-setup{padding:2rem 0}.quiz-setup-title{font-family:Inter,sans-serif;font-weight:700;font-size:28px;margin-bottom:.5rem}.quiz-setup-sub{font-size:15px;color:var(--grey);margin-bottom:2rem}.quiz-count-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:2rem}.quiz-count-btn{width:44px;height:44px;border:1.5px solid var(--border);background:none;font-size:15px;font-weight:700;border-radius:4px}.quiz-count-btn.active{background:var(--black);color:var(--white);border-color:var(--black)}.quiz-start-btn{width:100%;padding:18px;background:var(--black);color:var(--white);border:none;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.quiz-card{border-top:2px solid var(--black);padding:1.5rem 0}.quiz-progress{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--grey);margin-bottom:1rem}.quiz-type-tag{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:var(--light);padding:4px 10px;margin-bottom:1rem;display:inline-block}.quiz-question{font-size:20px;font-weight:600;line-height:1.5;margin-bottom:1.5rem;color:var(--black)}.quiz-blank{display:inline-block;border-bottom:2px solid var(--black);min-width:80px;padding:0 4px}.quiz-input{width:100%;border:none;border-bottom:2px solid var(--black);background:none;outline:none;font-family:Inter,sans-serif;font-size:18px;padding:10px 0;color:var(--black);margin-bottom:1rem}.quiz-submit-btn{width:100%;padding:16px;background:var(--black);color:var(--white);border:none;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.quiz-result{margin-top:1.5rem;padding:1.25rem;border-radius:4px}.quiz-result.correct{background:#e8f5e9;border:1px solid #a5d6a7}.quiz-result.wrong{background:#fce4ec;border:1px solid #f48fb1}.quiz-result-label{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:.75rem}.quiz-answer-reveal{font-size:18px;font-weight:700;margin-bottom:.75rem}.quiz-explanation{font-size:14px;color:#3a3a3a;line-height:1.6}.quiz-next-btn{width:100%;padding:16px;background:var(--black);color:var(--white);border:none;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-top:1rem}
+.quiz-done{text-align:center;padding:3rem 0}.quiz-done-score{font-size:48px;font-weight:700;margin-bottom:.5rem}.quiz-done-sub{font-size:16px;color:var(--grey);margin-bottom:2rem}.quiz-retry-btn{padding:14px 32px;background:var(--black);color:var(--white);border:none;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
 </style>
 </head>
 <body>
@@ -121,6 +125,7 @@ button{font-family:Inter,sans-serif;cursor:pointer}
       <button class="nav-tag" onclick="switchTab('history',this)">History</button>
       <button class="nav-tag" onclick="switchTab('partner',this)">Partner</button>
       <button class="nav-tag" onclick="switchTab('saved',this)">Saved ★</button>
+      <button class="nav-tag" onclick="switchTab('quiz',this);initQuiz()">Quiz ✦</button>
     </div></div>
 
     <div class="tab-content active" id="tab-today">
@@ -134,6 +139,7 @@ button{font-family:Inter,sans-serif;cursor:pointer}
       <div class="saved-section active" id="saved-words"></div><div class="saved-section" id="saved-sentences"></div><div class="saved-section" id="saved-collocations"></div>
     </div>
     <div class="tab-content" id="tab-partner"><div id="partner-area"></div></div>
+    <div class="tab-content" id="tab-quiz"><div id="quiz-area"></div></div>
   </div>
 
   <div class="hl-panel" id="hl-panel">
@@ -255,6 +261,112 @@ async function restoreHighlights(){if(!currentUser)return;try{const rows=await s
 async function logActivity(name,action){try{return await sb('POST','/rest/v1/activity_log',{user_name:name,action})}catch(e){}}
 
 if(getKey()){showScreen('login');loadStreaks()}
+
+// ===== QUIZ =====
+let quizQuestions=[],quizIndex=0,quizScore=0,quizTotal=5,quizAnswered=false;
+
+function initQuiz(){
+  const area=document.getElementById('quiz-area');
+  let h='<div class="quiz-setup"><div class="sec-eyebrow">Quiz</div><div class="quiz-setup-title">Test yourself.</div><div class="quiz-setup-sub">Fill in the blanks — English or Chinese both OK.</div><div class="sec-eyebrow" style="margin-top:1.5rem">How many questions?</div><div class="quiz-count-row">';
+  for(let i=1;i<=10;i++)h+='<button class="quiz-count-btn'+(i===quizTotal?' active':''+'"')+'" onclick="setQuizCount('+i+',this)">'+i+'</button>';
+  h+='</div><button class="quiz-start-btn" onclick="startQuiz()">Start Quiz →</button></div>';
+  area.innerHTML=h;
+}
+
+function setQuizCount(n,btn){
+  quizTotal=n;
+  document.querySelectorAll('.quiz-count-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+async function startQuiz(){
+  const area=document.getElementById('quiz-area');
+  area.innerHTML='<div class="loading">Building questions...</div>';
+  const questions=[];
+  // From today's lesson
+  if(currentLesson){
+    if(currentLesson.words?.length){
+      currentLesson.words.forEach(w=>{
+        questions.push({type:'word',answer:w.word,question:w.defZh||w.def,hint:'What is the English word for this definition?',explanation:w.pos+' — '+w.def+(w.defZh?' / '+w.defZh:'')+'\n'+w.ex1+(w.ex1Zh?' / '+w.ex1Zh:'')});
+        if(w.ex1)questions.push({type:'word',answer:w.word,question:w.ex1.replace(new RegExp(w.word,'gi'),'_____'),hint:'Fill in the blank:',explanation:w.pos+' — '+w.def+(w.defZh?' / '+w.defZh:'')});
+      });
+    }
+    if(currentLesson.sentences?.length){
+      currentLesson.sentences.forEach(s=>{
+        const words=s.en.split(' ');
+        const keyIdx=Math.floor(words.length/2);
+        const key=words[keyIdx].replace(/[^a-zA-Z]/g,'');
+        if(key.length>2){const q=words.map((w,i)=>i===keyIdx?'_____':w).join(' ');questions.push({type:'sentence',answer:key,question:q,hint:'Fill in the missing word:',explanation:(s.breakdown||s.breakdownZh||s.en)});}
+      });
+    }
+    if(currentLesson.collocations?.length){
+      currentLesson.collocations.forEach(c=>{
+        questions.push({type:'collocation',answer:c.phrase,question:c.meaningZh||c.meaning,hint:'What is the fixed collocation?',explanation:c.meaning+(c.meaningZh?' / '+c.meaningZh:'')+'\n— '+c.example});
+      });
+    }
+  }
+  // From saved items
+  try{
+    const saved=await sb('GET','/rest/v1/saved_items?user_name=eq.'+enc(currentUser)+'&order=created_at.desc&limit=30&select=*');
+    saved.forEach(item=>{
+      if(item.note)questions.push({type:'saved',answer:item.text,question:item.note,hint:'What word/phrase matches this note?',explanation:item.text+(item.topic?' (from: '+item.topic+')':'')});
+    });
+  }catch(e){}
+  if(!questions.length){document.getElementById('quiz-area').innerHTML='<div class="empty">No content to quiz yet.<br>Generate a lesson first!</div>';return;}
+  // Shuffle and pick
+  for(let i=questions.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[questions[i],questions[j]]=[questions[j],questions[i]];}
+  quizQuestions=questions.slice(0,quizTotal);
+  quizIndex=0;quizScore=0;
+  showQuizQuestion();
+}
+
+function showQuizQuestion(){
+  if(quizIndex>=quizQuestions.length){showQuizDone();return;}
+  const q=quizQuestions[quizIndex];
+  const typeLabel={word:'Key Word',sentence:'Key Sentence',collocation:'Fixed Collocation',saved:'Saved Item'}[q.type]||q.type;
+  const area=document.getElementById('quiz-area');
+  area.innerHTML='<div class="quiz-card">'+
+    '<div class="quiz-progress">Question '+(quizIndex+1)+' / '+quizQuestions.length+'</div>'+
+    '<div class="quiz-type-tag">'+typeLabel+'</div>'+
+    '<div class="quiz-question">'+escapeHtml(q.hint)+'<br><br>'+escapeHtml(q.question)+'</div>'+
+    '<input class="quiz-input" id="quiz-ans" placeholder="Your answer..." onkeydown="if(event.key===\'Enter\')submitQuiz()"/>'+
+    '<button class="quiz-submit-btn" onclick="submitQuiz()">Check →</button>'+
+    '<div id="quiz-result-area"></div>'+
+    '</div>';
+  setTimeout(()=>{const inp=document.getElementById('quiz-ans');if(inp)inp.focus();},100);
+}
+
+async function submitQuiz(){
+  if(quizAnswered)return;
+  const inp=document.getElementById('quiz-ans');
+  const userAns=inp?inp.value.trim():'';
+  if(!userAns)return;
+  quizAnswered=true;
+  const q=quizQuestions[quizIndex];
+  const resultArea=document.getElementById('quiz-result-area');
+  resultArea.innerHTML='<div class="loading">Checking...</div>';
+  // AI check
+  let isCorrect=false;
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':getKey(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:100,messages:[{role:'user',content:'The correct answer is: "'+q.answer+'"\nThe student answered: "'+userAns+'"\nIs the student\'s answer correct or essentially the same meaning? Reply JSON only: {"correct":true} or {"correct":false}'}]})})
+    const data=await r.json();
+    const parsed=JSON.parse(data.content[0].text.replace(/```json|```/g,'').trim());
+    isCorrect=parsed.correct===true;
+  }catch(e){isCorrect=userAns.toLowerCase().trim()===q.answer.toLowerCase().trim();}
+  if(isCorrect)quizScore++;
+  const html=isCorrect?
+    '<div class="quiz-result correct"><div class="quiz-result-label">✅ Correct!</div><div class="quiz-explanation">'+escapeHtml(q.explanation)+'</div></div>':
+    '<div class="quiz-result wrong"><div class="quiz-result-label">❌ Not quite!</div><div class="quiz-answer-reveal">Answer: '+escapeHtml(q.answer)+'</div><div class="quiz-explanation">'+escapeHtml(q.explanation)+'</div></div>';
+  resultArea.innerHTML=html+'<button class="quiz-next-btn" onclick="nextQuiz()">'+(quizIndex+1<quizQuestions.length?'Next →':'See Results →')+'</button>';
+}
+
+function nextQuiz(){quizAnswered=false;quizIndex++;showQuizQuestion();}
+
+function showQuizDone(){
+  const pct=Math.round(quizScore/quizQuestions.length*100);
+  const msg=pct===100?'Perfect! 🎉':pct>=70?'Great work! 💪':pct>=50?'Keep it up! 📚':'Keep practising! 🔥';
+  document.getElementById('quiz-area').innerHTML='<div class="quiz-done"><div class="sec-eyebrow">Quiz Complete</div><div class="quiz-done-score">'+quizScore+'/'+quizQuestions.length+'</div><div class="quiz-done-sub">'+msg+'</div><button class="quiz-retry-btn" onclick="initQuiz()">Try Again</button></div>';
+}
 </script>
 </body>
 </html>
