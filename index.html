@@ -179,7 +179,7 @@ async function sb(method,path,body,prefer){
 function showScreen(name){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+name).classList.add('active')}
 function changeFontSize(delta){fontSize=Math.max(15,Math.min(24,fontSize+delta));document.documentElement.style.setProperty('--fs-base',fontSize+'px');document.querySelectorAll('.article-text').forEach(el=>el.style.fontSize=(fontSize+1)+'px');document.querySelectorAll('.sent-en').forEach(el=>el.style.fontSize=(fontSize+6)+'px');document.querySelectorAll('.word-en').forEach(el=>el.style.fontSize=(fontSize+12)+'px')}
 
-function saveSetup(){const k=document.getElementById('setup-key').value.trim();const err=document.getElementById('setup-err');if(!k||k.length<20){err.textContent='Please paste your full API key.';err.style.display='block';return}saveKey(k);err.style.display='none';showScreen('login');loadStreaks()}
+function saveSetup(){const raw=document.getElementById('setup-key').value;const k=raw.replace(/\s+/g,'');const err=document.getElementById('setup-err');if(!k||k.length<20){err.textContent='Please paste your full API key (sk-ant-...).';err.style.display='block';return}if(!k.startsWith('sk-')){err.textContent='Key should start with sk-ant-... Please check and try again.';err.style.display='block';return}saveKey(k);err.style.display='none';try{showScreen('login');loadStreaks()}catch(e){err.textContent='Error: '+e.message;err.style.display='block'}}
 
 async function loadStreaks(){
   for(const name of ['Nara','Alex']){
