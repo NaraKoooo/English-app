@@ -354,7 +354,37 @@ function fmtDate(d){return new Date(d+'T12:00:00').toLocaleDateString('en-GB',{w
 function fmtDateShort(d){return new Date(d+'T12:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});}
 function fmtTime(iso){const d=new Date(iso),now=new Date(),diff=Math.floor((now-d)/60000);if(diff<1)return'just now';if(diff<60)return diff+'m ago';if(diff<1440)return Math.floor(diff/60)+'h ago';return fmtDateShort(iso.split('T')[0]);}
 
-async function sb(method,path,body){
+async function sb(method, path, body){
+  const opts = {
+    method,
+    headers: {
+      apikey: SB_KEY,
+      Authorization: 'Bearer ' + SB_KEY,
+      'Content-Type': 'application/json',
+      Prefer: 'resolution=merge-duplicates,return=representation'
+    }
+  };
+
+  if(body) opts.body = JSON.stringify(body);
+
+  const r = await fetch(SB_URL + path, opts);
+  const text = await r.text();
+
+  let data = null;
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch {
+    data = text;
+  }
+
+  if(!r.ok){
+    console.error('Supabase error:', method, path, data);
+    alert('Supabase save failed: ' + (data?.message || 'Unknown error'));
+    throw new Error(data?.message || 'Supabase request failed');
+  }
+
+  return data || [];
+}
   const opts={method,headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'}};
   if(body)opts.body=JSON.stringify(body);
   const r=await fetch(SB_URL+path,opts);
@@ -493,7 +523,16 @@ async function generateLesson(){
     }
     lesson.topic=topic||lesson.topicLabel;
     currentLesson=lesson;
-    try{await sb('POST','/rest/v1/lessons',{user_name:currentUser,date:today(),topic:lesson.topic,content:lesson});}catch(e){console.warn(e);}
+    try{await sb(
+  'POST',
+  '/rest/v1/lessons?on_conflict=user_name,date',
+  {
+    user_name: currentUser,
+    date: today(),
+    topic: lesson.topic,
+    content: lesson
+  }
+);
     logActivity(currentUser,'Completed lesson: '+lesson.topic);
     renderLesson(lesson);
     renderPractice(lesson);
@@ -692,6 +731,84 @@ async function loadHistoryLesson(date){
 }
 
 async function renderSaved(){
+  const types = ['words','sentences','collocations'];
+
+  for(const t of types){
+    document.getElementById('saved-' + t).innerHTML =
+      '<div class="loading">Loading...</div>';
+  }
+
+  try{
+    const rows = await sb(
+      'GET',
+      '/rest/v1/saved_items?user_name=eq.' + currentUser + '&order=created_at.desc&select=*'
+    );
+
+    const byType = {
+      words: [],
+      sentences: [],
+      collocations: []
+    };
+
+    rows.forEach(item => {
+      if(byType[item.type]){
+        byType[item.type].push(item);
+      }
+    });
+
+    types.forEach(type => {
+      const container = document.getElementById('saved-' + type);
+      const items = byType[type];
+
+      if(!items.length){
+        container.innerHTML =
+          '<div class="empty">No saved ' + type + ' yet.<br>Select text in an article to save!</div>';
+        return;
+      }
+
+      const byDate = {};
+
+      items.forEach(item => {
+        const d = item.date || item.created_at.split('T')[0];
+        if(!byDate[d]) byDate[d] = [];
+        byDate[d].push(item);
+      });
+
+      let h = '';
+
+      Object.keys(byDate).sort().reverse().forEach(date => {
+        h += '<div class="hl-date-group">' + fmtDateShort(date) + '</div>';
+
+        byDate[date].forEach(item => {
+          h += '<div class="hl-item"><div class="hl-item-header">';
+
+          if(type === 'words'){
+            h += '<div class="hl-word">' + item.text + '</div>';
+          }else{
+            h += '<div class="hl-sentence">' + item.text + '</div>';
+          }
+
+          h += '<button class="hl-del" onclick="deleteHighlight(\'' + item.id + '\',this)">✕</button></div>';
+
+          if(item.note){
+            h += '<div class="hl-note">' + item.note + '</div>';
+          }
+
+          h += '</div>';
+        });
+      });
+
+      container.innerHTML = h;
+    });
+
+  }catch(e){
+    console.error(e);
+    types.forEach(t => {
+      document.getElementById('saved-' + t).innerHTML =
+        '<div class="empty">Could not load saved items.</div>';
+    });
+  }
+}
   const types=['words','sentences','collocations'];
   for(const t of types)document.getElementById('saved-'+t).innerHTML='<div class="loading">Loading...</div>';
   try{
@@ -730,7 +847,14 @@ async function renderSaved(){
   }catch{types.forEach(t=>{document.getElementById('saved-'+t).innerHTML='<div class="empty">Could not load.</div>';});}
 }
 
-async function deleteHighlight(id,btn){
+async function deleteHighlight(id, btn){
+  try{
+    await sb('DELETE','/rest/v1/saved_items?id=eq.' + id);
+    btn.closest('.hl-item').remove();
+  }catch(e){
+    console.error(e);
+  }
+}
   try{await sb('DELETE','/rest/v1/activity_log?id=eq.'+id);btn.closest('.hl-item').remove();}catch{}
 }
 
@@ -788,6 +912,42 @@ function handleSel(e){
 function closeHlPanel(){document.getElementById('hl-panel').classList.remove('open');pendingHL=null;}
 
 async function saveHighlight(){
+  if(!pendingHL) return;
+
+  const note = document.getElementById('hl-note-input').value.trim();
+  const text = pendingHL.text;
+  const wordCount = text.trim().split(/\s+/).length;
+
+  const isColl =
+    currentLesson &&
+    currentLesson.collocations &&
+    currentLesson.collocations.some(
+      c => c.phrase.toLowerCase() === text.toLowerCase()
+    );
+
+  const type = isColl ? 'collocations' : wordCount <= 2 ? 'words' : 'sentences';
+
+  try{
+    const span = document.createElement('span');
+    span.style.background = '#fff176';
+    pendingHL.range.surroundContents(span);
+  }catch{}
+
+  await sb(
+    'POST',
+    '/rest/v1/saved_items',
+    {
+      user_name: currentUser,
+      type,
+      text,
+      note,
+      topic: currentLesson?.topicLabel || currentLesson?.topic || '',
+      date: today()
+    }
+  );
+
+  closeHlPanel();
+}
   if(!pendingHL)return;
   const note=document.getElementById('hl-note-input').value.trim();
   const text=pendingHL.text;
