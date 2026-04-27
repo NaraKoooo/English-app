@@ -73,6 +73,9 @@ button{font-family:Inter,sans-serif;cursor:pointer}
 .correct-btn{font-size:11px;font-weight:700;background:none;border:1.5px solid var(--black);padding:10px 20px;margin-top:1rem;text-transform:uppercase}
 .prac-hint{font-size:13px;color:var(--grey);font-style:italic;margin-bottom:.75rem;padding:8px 12px;background:var(--light);border-left:3px solid var(--border)}
 .prac-guide{margin-bottom:1rem;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.prac-guide-header{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#f5f5f5;border-bottom:1px solid var(--border)}
+.prac-guide-toggle-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--grey)}
+.prac-guide .zh-content{display:none}
 .prac-guide-list{display:flex;flex-direction:column}
 .prac-guide-item{padding:12px 14px;border-bottom:1px solid var(--border);background:#fff}
 .prac-guide-item:last-child{border-bottom:none}
@@ -245,6 +248,7 @@ function renderLesson(lesson){
   area.innerHTML=h;
   restoreHighlights()
 }
+function togglePracLang(btn,cardId){var card=document.getElementById(cardId);var enD=card.querySelector('.en-content');var zhD=card.querySelector('.zh-content');var isZh=btn.textContent==='中文';if(isZh){enD.style.display='none';zhD.style.display='block';btn.textContent='EN';}else{enD.style.display='block';zhD.style.display='none';btn.textContent='中文';}}
 function toggleDetail(btn,cardId){const card=document.getElementById(cardId),isZh=card.querySelector('.lang-btn').classList.contains('zh'),enD=card.querySelector('.sent-detail.en-content'),zhD=card.querySelector('.sent-detail.zh-content'),open=enD?.classList.contains('open');if(open){enD.classList.remove('open');zhD?.classList.remove('open');btn.textContent='Full breakdown'}else{enD?.classList.add('open');if(isZh)zhD?.classList.add('open');btn.textContent='Hide breakdown'}}
 
 function renderPractice(lesson){
@@ -273,10 +277,29 @@ function renderPractice(lesson){
     h+='<div class="prac-num">Sentence 0'+(i+1)+'</div>';
     h+='<div class="prac-model">'+escapeHtml(s.en)+'</div>';
     if(breakdown)h+='<div class="prac-hint">'+escapeHtml(breakdown)+'</div>';
-    h+='<div class="prac-guide"><div class="prac-guide-list">';
-    if(pattern)h+='<div class="prac-guide-item"><div class="prac-guide-label">'+patternLabel+'</div><div class="prac-guide-text">'+escapeHtml(pattern)+'</div></div>';
-    if(tryIt)h+='<div class="prac-guide-item prac-guide-tryit"><div class="prac-guide-label">'+tryItLabel+'</div><div class="prac-guide-text">'+escapeHtml(tryIt)+'</div></div>';
-    h+='</div></div>';
+    var enDetail=s.detail||[];
+    var zhDetail=s.detailZh||[];
+    var enPattern='';
+    var enTryIt='';
+    var zhPattern='';
+    var zhTryIt='';
+    enDetail.forEach(function(d){if(d.label==='PATTERN')enPattern=d.text||'';if(d.label==='TRY IT')enTryIt=d.text||'';});
+    zhDetail.forEach(function(d){if(d.label==='句型用法')zhPattern=d.text||'';if(d.label==='自己造句')zhTryIt=d.text||'';});
+    var cardId='prac-card-'+i;
+    h+='<div class="prac-guide" id="'+cardId+'">';
+    h+='<div class="prac-guide-header">';
+    h+='<span class="prac-guide-toggle-label">Breakdown</span>';
+    h+='<button class="lang-btn" onclick="togglePracLang(this,\''+cardId+'\')" style="font-size:12px;padding:4px 10px;border-radius:20px;border:1.5px solid #222;background:#fff;cursor:pointer;font-weight:600;">中文</button>';
+    h+='</div>';
+    h+='<div class="prac-guide-list en-content open">';
+    if(enPattern)h+='<div class="prac-guide-item"><div class="prac-guide-label">PATTERN</div><div class="prac-guide-text">'+escapeHtml(enPattern)+'</div></div>';
+    if(enTryIt)h+='<div class="prac-guide-item prac-guide-tryit"><div class="prac-guide-label">TRY IT</div><div class="prac-guide-text">'+escapeHtml(enTryIt)+'</div></div>';
+    h+='</div>';
+    h+='<div class="prac-guide-list zh-content">';
+    if(zhPattern)h+='<div class="prac-guide-item"><div class="prac-guide-label">句型用法</div><div class="prac-guide-text">'+escapeHtml(zhPattern)+'</div></div>';
+    if(zhTryIt)h+='<div class="prac-guide-item prac-guide-tryit"><div class="prac-guide-label">自己造句</div><div class="prac-guide-text">'+escapeHtml(zhTryIt)+'</div></div>';
+    h+='</div>';
+    h+='</div>';
     h+='<textarea class="prac-ta" id="prac-'+i+'" placeholder="Write your sentence here..."></textarea>';
     h+='<button class="correct-btn" onclick="correctSentence('+i+')">Correct →</button>';
     h+='<div class="correction-wrap" id="corr-wrap-'+i+'"></div>';
