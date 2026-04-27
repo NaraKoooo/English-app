@@ -489,7 +489,7 @@ async function sb(method,path,body){
   return ct.includes('json')?r.json():[];
 }
 
-function getKey(){return lsGet('anthro_key');}
+function getKey(){const m=document.cookie.match(/anthro_key=([^;]+)/);return m?m[1]:null;}
 
 function showScreen(name){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -508,7 +508,7 @@ function saveSetup(){
   const k=document.getElementById('setup-key').value.trim();
   const err=document.getElementById('setup-err');
   if(!k||k.length<20){err.textContent='Please paste your full API key.';err.style.display='block';return;}
-  localStorage.setItem('anthro_key',k);
+document.cookie='anthro_key='+k+';max-age=31536000;path=/';
   err.style.display='none';
   showScreen('login');
   loadStreaks();
