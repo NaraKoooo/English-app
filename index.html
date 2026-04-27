@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="Daily English">
 <title>Daily English</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
   --black: #0d0d0d;
@@ -18,12 +18,18 @@
   --accent: #1a1a1a;
   --border: #e0e0d8;
   --fs-base: 18px;
+  --sent-bg: #f5ede6;
+  --sent-border: #e8d5c8;
+  --word-bg: #edf0e8;
+  --word-border: #d5dcc8;
+  --coll-bg: #e8edf5;
+  --coll-border: #c8d0e0;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
 body {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   background: var(--white);
   color: var(--black);
   font-size: var(--fs-base);
@@ -49,7 +55,7 @@ body {
   border-radius: 50%;
   background: none;
   cursor: pointer;
-  font-family: 'DM Serif Display', serif;
+  font-family: 'Fraunces', serif;
   font-size: 14px;
   color: var(--black);
   display: flex; align-items: center; justify-content: center;
@@ -59,7 +65,7 @@ body {
 /* ── SETUP ── */
 .setup-wrap { padding: 3.5rem 1.75rem 2rem; }
 .setup-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--grey); margin-bottom: 1.5rem; }
-.setup-title { font-family: 'DM Serif Display', serif; font-size: 42px; line-height: 1.1; margin-bottom: 1rem; }
+.setup-title { font-family: 'Fraunces', serif; font-size: 42px; line-height: 1.1; margin-bottom: 1rem; }
 .setup-sub { font-size: 16px; color: var(--grey); margin-bottom: 2.5rem; line-height: 1.6; }
 .setup-label { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--grey); margin-bottom: 10px; display: block; }
 .setup-input {
@@ -71,7 +77,7 @@ body {
   color: var(--black);
   background: none;
   outline: none;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   margin-bottom: 2rem;
 }
 .setup-input::placeholder { color: var(--border); }
@@ -81,7 +87,7 @@ body {
   border: none; border-radius: 4px;
   font-size: 15px; font-weight: 600;
   letter-spacing: 1px; text-transform: uppercase;
-  cursor: pointer; font-family: 'DM Sans', sans-serif;
+  cursor: pointer; font-family: 'Inter', sans-serif;
 }
 .setup-note { font-size: 13px; color: var(--grey); margin-top: 1rem; line-height: 1.6; }
 .err { font-size: 13px; color: #c00; margin-top: 10px; display: none; }
@@ -89,7 +95,7 @@ body {
 /* ── LOGIN ── */
 .login-wrap { padding: 3.5rem 1.75rem 2rem; }
 .login-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--grey); margin-bottom: 0.75rem; }
-.login-title { font-family: 'DM Serif Display', serif; font-size: 52px; line-height: 1.05; margin-bottom: 0.5rem; }
+.login-title { font-family: 'Fraunces', serif; font-size: 52px; line-height: 1.05; margin-bottom: 0.5rem; }
 .login-sub { font-size: 16px; color: var(--grey); margin-bottom: 3rem; }
 
 .user-card {
@@ -116,13 +122,13 @@ body {
 }
 .header-name-wrap {}
 .header-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--grey); margin-bottom: 2px; }
-.header-name { font-family: 'DM Serif Display', serif; font-size: 28px; line-height: 1.1; }
+.header-name { font-family: 'Fraunces', serif; font-size: 28px; line-height: 1.1; }
 .header-date { font-size: 13px; color: var(--grey); margin-top: 2px; }
 .header-right { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
 .btn-switch {
   font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
   color: var(--grey); background: none; border: 1.5px solid var(--border);
-  border-radius: 100px; padding: 6px 14px; cursor: pointer; font-family: 'DM Sans', sans-serif;
+  border-radius: 100px; padding: 6px 14px; cursor: pointer; font-family: 'Inter', sans-serif;
 }
 
 /* ── NAV TAGS (图4 style) ── */
@@ -136,7 +142,7 @@ body {
   background: none;
   color: var(--grey);
   cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   white-space: nowrap;
   transition: all 0.15s;
 }
@@ -155,16 +161,16 @@ body {
 .topic-wrap { padding: 1.5rem 0 0; }
 .topic-label { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--grey); margin-bottom: 10px; display: block; }
 .topic-row { display: flex; gap: 10px; align-items: flex-end; border-bottom: 2px solid var(--black); padding-bottom: 10px; margin-bottom: 1.5rem; }
-.topic-input { flex: 1; background: none; border: none; font-size: 18px; color: var(--black); outline: none; font-family: 'DM Sans', sans-serif; }
+.topic-input { flex: 1; background: none; border: none; font-size: 18px; color: var(--black); outline: none; font-family: 'Inter', sans-serif; }
 .topic-input::placeholder { color: var(--border); }
-.topic-btn { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; background: var(--black); color: var(--white); border: none; padding: 10px 18px; cursor: pointer; font-family: 'DM Sans', sans-serif; border-radius: 2px; }
+.topic-btn { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; background: var(--black); color: var(--white); border: none; padding: 10px 18px; cursor: pointer; font-family: 'Inter', sans-serif; border-radius: 2px; }
 
 .gen-btn {
   width: 100%; padding: 20px;
   background: var(--black); color: var(--white);
   border: none; font-size: 15px; font-weight: 600;
   letter-spacing: 1px; text-transform: uppercase;
-  cursor: pointer; font-family: 'DM Sans', sans-serif;
+  cursor: pointer; font-family: 'Inter', sans-serif;
   margin-bottom: 1.5rem;
 }
 
@@ -176,7 +182,7 @@ body {
   display: flex; align-items: center; justify-content: space-between;
 }
 .sec-title {
-  font-family: 'DM Serif Display', serif;
+  font-family: 'Fraunces', serif;
   font-size: 32px; line-height: 1.1;
   margin-bottom: 1.25rem;
 }
@@ -185,28 +191,28 @@ body {
 .article-card { border-top: 2px solid var(--black); padding-top: 1.25rem; margin-bottom: 2rem; }
 .article-topic-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
 .topic-tag { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--black); background: var(--light); padding: 5px 12px; }
-.article-text { font-size: 19px; line-height: 1.8; color: #2a2a2a; font-weight: 300; }
-.article-text-zh { font-size: 17px; line-height: 1.8; color: var(--grey); margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--border); display: none; font-weight: 300; }
+.article-text { font-size: 19px; line-height: 1.8; color: #2a2a2a; font-weight: 300; text-align: justify; }
+.article-text-zh { font-size: 17px; line-height: 1.8; color: var(--grey); margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--border); display: none; font-weight: 300; text-align: justify; }
 
 /* ── LANG TOGGLE ── */
 .lang-btn {
   font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
   border: 1.5px solid var(--border); background: none; color: var(--grey);
-  padding: 5px 12px; cursor: pointer; font-family: 'DM Sans', sans-serif;
+  padding: 5px 12px; cursor: pointer; font-family: 'Inter', sans-serif;
   border-radius: 100px; transition: all 0.15s;
 }
 .lang-btn.zh { background: var(--black); color: var(--white); border-color: var(--black); }
 
 /* ── SENTENCE CARDS ── */
-.sent-block { border-top: 1.5px solid var(--border); padding: 1.75rem 0; }
-.sent-block:last-child { border-bottom: 1.5px solid var(--border); }
+.sent-block { border-top: 1.5px solid var(--sent-border); padding: 1.75rem 1.5rem; background: var(--sent-bg); margin-bottom: 8px; border-radius: 4px; }
+.sent-block:last-child { border-bottom: none; }
 .sent-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
 .sent-num { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--grey); }
-.sent-en { font-family: 'DM Serif Display', serif; font-size: 24px; line-height: 1.3; color: var(--black); margin-bottom: 0.75rem; }
+.sent-en { font-family: 'Fraunces', serif; font-size: 24px; line-height: 1.3; color: var(--black); margin-bottom: 0.75rem; }
 .sent-pattern { font-size: 14px; color: var(--grey); margin-bottom: 1rem; font-style: italic; }
 .sent-pattern-zh { font-size: 14px; color: var(--grey); margin-bottom: 1rem; font-style: italic; display: none; }
-.toggle-btn { font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--black); background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; padding: 0; text-decoration: underline; text-underline-offset: 3px; }
-.sent-detail { display: none; margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--border); }
+.toggle-btn { font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--black); background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; padding: 0; text-decoration: underline; text-underline-offset: 3px; }
+.sent-detail { display: none; margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--sent-border); }
 .sent-detail.open { display: block; }
 .detail-list { list-style: none; padding: 0; margin: 0; }
 .detail-item { display: flex; gap: 14px; margin-bottom: 1.25rem; align-items: flex-start; }
@@ -216,10 +222,10 @@ body {
 .detail-text { font-size: 16px; line-height: 1.7; color: #3a3a3a; }
 
 /* ── WORD CARDS ── */
-.word-block { border-top: 1.5px solid var(--border); padding: 1.5rem 0; }
-.word-block:last-child { border-bottom: 1.5px solid var(--border); }
+.word-block { border-top: 1.5px solid var(--word-border); padding: 1.5rem 1.5rem; background: var(--word-bg); margin-bottom: 8px; border-radius: 4px; }
+.word-block:last-child { border-bottom: none; }
 .word-meta { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 0.5rem; }
-.word-en { font-family: 'DM Serif Display', serif; font-size: 30px; line-height: 1.1; }
+.word-en { font-family: 'Fraunces', serif; font-size: 30px; line-height: 1.1; }
 .word-pos { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--grey); border: 1.5px solid var(--border); padding: 3px 10px; margin-top: 4px; display: inline-block; }
 .word-def { font-size: 17px; color: #3a3a3a; margin-top: 0.5rem; line-height: 1.6; }
 .word-def-zh { font-size: 15px; color: var(--grey); margin-top: 0.25rem; display: none; }
@@ -229,10 +235,10 @@ body {
 .word-ex-zh::before { content: '— '; }
 
 /* ── COLLOCATION CARDS ── */
-.coll-block { border-top: 1.5px solid var(--border); padding: 1.5rem 0; }
-.coll-block:last-child { border-bottom: 1.5px solid var(--border); }
+.coll-block { border-top: 1.5px solid var(--coll-border); padding: 1.5rem 1.5rem; background: var(--coll-bg); margin-bottom: 8px; border-radius: 4px; }
+.coll-block:last-child { border-bottom: none; }
 .coll-meta { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 0.5rem; }
-.coll-en { font-family: 'DM Serif Display', serif; font-size: 26px; line-height: 1.2; color: var(--black); }
+.coll-en { font-family: 'Fraunces', serif; font-size: 26px; line-height: 1.2; color: var(--black); }
 .coll-meaning { font-size: 16px; color: #3a3a3a; margin-top: 0.5rem; }
 .coll-meaning-zh { font-size: 15px; color: var(--grey); margin-top: 0.25rem; display: none; }
 .coll-ex { font-size: 15px; color: var(--grey); margin-top: 0.5rem; font-style: italic; }
@@ -244,7 +250,7 @@ body {
 
 /* ── PRACTICE ── */
 .prac-intro { border-top: 2px solid var(--black); padding: 1.5rem 0 1.25rem; margin-bottom: 1.5rem; }
-.prac-intro-title { font-family: 'DM Serif Display', serif; font-size: 28px; margin-bottom: 0.5rem; }
+.prac-intro-title { font-family: 'Fraunces', serif; font-size: 28px; margin-bottom: 0.5rem; }
 .prac-intro-sub { font-size: 15px; color: var(--grey); }
 .prac-words { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 0.75rem; }
 .prac-word-tag { font-size: 12px; font-weight: 600; letter-spacing: 0.5px; border: 1.5px solid var(--black); padding: 3px 10px; }
@@ -252,12 +258,12 @@ body {
 .prac-block { border-top: 1.5px solid var(--border); padding: 1.75rem 0; }
 .prac-block:last-child { border-bottom: 1.5px solid var(--border); }
 .prac-num { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--grey); margin-bottom: 0.5rem; }
-.prac-model { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--black); margin-bottom: 1rem; line-height: 1.3; }
+.prac-model { font-family: 'Fraunces', serif; font-size: 20px; color: var(--black); margin-bottom: 1rem; line-height: 1.3; }
 .prac-ta {
   width: 100%; min-height: 90px;
   border: none; border-bottom: 2px solid var(--black);
   padding: 8px 0; font-size: 18px;
-  font-family: 'DM Sans', sans-serif; color: var(--black);
+  font-family: 'Inter', sans-serif; color: var(--black);
   background: none; outline: none; resize: none;
 }
 .prac-ta::placeholder { color: var(--border); }
@@ -265,7 +271,7 @@ body {
   font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
   background: none; border: 1.5px solid var(--black);
   padding: 10px 20px; cursor: pointer; color: var(--black);
-  font-family: 'DM Sans', sans-serif; margin-top: 1rem;
+  font-family: 'Inter', sans-serif; margin-top: 1rem;
 }
 .correct-btn:active { background: var(--black); color: var(--white); }
 
@@ -281,7 +287,7 @@ body {
 .hist-block { border-top: 1.5px solid var(--border); padding: 1.5rem 0; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
 .hist-block:last-child { border-bottom: 1.5px solid var(--border); }
 .hist-date { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--grey); margin-bottom: 4px; }
-.hist-topic { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--black); }
+.hist-topic { font-family: 'Fraunces', serif; font-size: 22px; color: var(--black); }
 .hist-arrow { font-size: 24px; color: var(--grey); }
 
 /* ── SAVED / HIGHLIGHTS ── */
@@ -293,7 +299,7 @@ body {
 .hl-item { border-top: 1.5px solid var(--border); padding: 1.25rem 0; }
 .hl-item:last-child { border-bottom: 1.5px solid var(--border); }
 .hl-item-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 0.5rem; }
-.hl-word { font-family: 'DM Serif Display', serif; font-size: 26px; background: #fff176; padding: 0 4px; }
+.hl-word { font-family: 'Fraunces', serif; font-size: 26px; background: #fff176; padding: 0 4px; }
 .hl-sentence { font-size: 18px; line-height: 1.6; color: var(--black); background: #fff176; padding: 2px 4px; }
 .hl-note { font-size: 15px; color: var(--grey); margin-top: 0.5rem; font-style: italic; }
 .hl-date { font-size: 11px; color: #bbb; margin-top: 0.25rem; letter-spacing: 0.5px; }
@@ -302,7 +308,7 @@ body {
 
 /* ── PARTNER ── */
 .partner-header { border-top: 2px solid var(--black); padding: 1.5rem 0 1rem; margin-bottom: 0.5rem; }
-.partner-name { font-family: 'DM Serif Display', serif; font-size: 36px; }
+.partner-name { font-family: 'Fraunces', serif; font-size: 36px; }
 .partner-streak { font-size: 14px; color: var(--grey); margin-top: 4px; }
 .streak-bar { display: flex; gap: 6px; margin-top: 1rem; }
 .sday { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
@@ -319,12 +325,12 @@ body {
 .hl-panel { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: var(--white); border-top: 2px solid var(--black); padding: 1.5rem 1.75rem 2rem; z-index: 999; display: none; }
 .hl-panel.open { display: block; }
 .hl-panel-label { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--grey); margin-bottom: 0.75rem; }
-.hl-selected { font-family: 'DM Serif Display', serif; font-size: 24px; background: #fff176; padding: 2px 6px; margin-bottom: 1rem; display: inline-block; }
-.hl-input { width: 100%; border: none; border-bottom: 2px solid var(--black); padding: 10px 0; font-size: 17px; font-family: 'DM Sans', sans-serif; color: var(--black); background: none; outline: none; resize: none; min-height: 60px; margin-bottom: 1.25rem; }
+.hl-selected { font-family: 'Fraunces', serif; font-size: 24px; background: #fff176; padding: 2px 6px; margin-bottom: 1rem; display: inline-block; }
+.hl-input { width: 100%; border: none; border-bottom: 2px solid var(--black); padding: 10px 0; font-size: 17px; font-family: 'Inter', sans-serif; color: var(--black); background: none; outline: none; resize: none; min-height: 60px; margin-bottom: 1.25rem; }
 .hl-input::placeholder { color: var(--border); }
 .hl-actions { display: flex; gap: 10px; }
-.hl-save { flex: 1; padding: 14px; background: var(--black); color: var(--white); border: none; font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; font-family: 'DM Sans', sans-serif; }
-.hl-cancel { padding: 14px 20px; background: none; border: 1.5px solid var(--border); font-size: 13px; font-weight: 600; cursor: pointer; color: var(--grey); font-family: 'DM Sans', sans-serif; }
+.hl-save { flex: 1; padding: 14px; background: var(--black); color: var(--white); border: none; font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; font-family: 'Inter', sans-serif; }
+.hl-cancel { padding: 14px 20px; background: none; border: 1.5px solid var(--border); font-size: 13px; font-weight: 600; cursor: pointer; color: var(--grey); font-family: 'Inter', sans-serif; }
 .hl-close { position: absolute; top: 1.25rem; right: 1.75rem; background: none; border: none; font-size: 22px; cursor: pointer; color: var(--grey); }
 
 .empty { text-align: center; padding: 4rem 1rem; color: var(--grey); font-size: 16px; line-height: 1.7; }
@@ -676,7 +682,7 @@ function renderLesson(lesson){
   if(lesson.reviewSentences&&lesson.reviewSentences.length){
     h+='<div class="review-section"><div class="sec-eyebrow">Review</div>';
     if(lesson.reviewWords&&lesson.reviewWords.length)h+=lesson.reviewWords.map(w=>'<span class="review-pill">'+w+'</span>').join('');
-    lesson.reviewSentences.forEach(s=>{h+='<p style="font-family:\'DM Serif Display\',serif;font-size:20px;margin-top:0.75rem;line-height:1.4">'+s+'</p>';});
+    lesson.reviewSentences.forEach(s=>{h+='<p style="font-family:\'Fraunces\',serif;font-size:20px;margin-top:0.75rem;line-height:1.4">'+s+'</p>';});
     h+='</div>';
   }
 
